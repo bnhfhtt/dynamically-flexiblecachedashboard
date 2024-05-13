@@ -1,24 +1,28 @@
-function isMatch(s, p) {
-  const dp = Array.from(Array(s.length + 1), () =>
-    Array(p.length + 1).fill(false),
-  );
-  dp[0][0] = true;
-  for (let i = 1; i <= p.length; i++) {
-    if (p[i - 1] === "*") {
-      dp[0][i] = dp[0][i - 2];
-    }
+function reorderList(head) {
+  if (!head || !head.next) return;
+  let slow = head;
+  let fast = head;
+  while (fast.next && fast.next.next) {
+    slow = slow.next;
+    fast = fast.next.next;
   }
-  for (let i = 1; i <= s.length; i++) {
-    for (let j = 1; j <= p.length; j++) {
-      if (s[i - 1] === p[j - 1] || p[j - 1] === ".") {
-        dp[i][j] = dp[i - 1][j - 1];
-      } else if (p[j - 1] === "*") {
-        dp[i][j] = dp[i][j - 2];
-        if (p[j - 2] === "." || s[i - 1] === p[j - 2]) {
-          dp[i][j] = dp[i][j] || dp[i - 1][j];
-        }
-      }
-    }
+  let prev = null;
+  let curr = slow.next;
+  slow.next = null;
+  while (curr) {
+    const next = curr.next;
+    curr.next = prev;
+    prev = curr;
+    curr = next;
   }
-  return dp[s.length][p.length];
+  let first = head;
+  let second = prev;
+  while (second.next) {
+    const next = first.next;
+    first.next = second;
+    first = next;
+    const next2 = second.next;
+    second.next = first;
+    second = next2;
+  }
 }
